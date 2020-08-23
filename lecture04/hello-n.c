@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     	if (pid == 0) {	// Child
     	    sleep(i);
     	    printf("Hello from child %d\n", i);
-    	    _exit(0);
+    	    exit(i);
 	} /*else {	// Version 2: Parent waits after each child (serial)
 	    while (wait(NULL) < 0);
 	}
@@ -39,7 +39,10 @@ int main(int argc, char *argv[]) {
 
     // Version 3: Wait after launching all children (parallel)
     for (int i = 0; i < n; i++) {
-	while (wait(NULL) < 0);
+    	int status;
+    	pid_t pid;
+	while ((pid = wait(&status)) < 0);
+	printf("Child %d with exit status: %d\n", pid, WEXITSTATUS(status));
     }
 
     return EXIT_SUCCESS;
